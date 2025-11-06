@@ -17,7 +17,7 @@ Get notified instantly when users take screenshots of your app’s content.
 
 ## 🧩 Usage
 
-import 'package:screen_capture_detector/screen_capture_detector.dart';
+```import 'package:screen_capture_detector/screen_capture_detector.dart';
 
 class MyApp extends StatefulWidget {
   @override
@@ -71,14 +71,15 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+```
 
 🧠 Note:
-On iOS, the plugin detects when a screenshot is taken but cannot provide the file path due to platform limitations.
+- On iOS, the plugin detects when a screenshot is taken but cannot provide the file path due to platform limitations.
 
 
 🛠️ Manual Permission Request (Optional)
 
-final detector = ScreenCaptureDetector();
+```final detector = ScreenCaptureDetector();
 
 // Request permissions manually
 final hasPermission = await detector.requestPermissions();
@@ -88,20 +89,21 @@ if (hasPermission) {
 } else {
   print('Permissions denied');
 }
+```
 
-✅ On Android 13+, the plugin requests Permission.photos
-✅ On older Android versions, it requests Permission.storage
-✅ On iOS, no permission is required
+- ✅ On Android 13+, the plugin requests Permission.photos
+- ✅ On older Android versions, it requests Permission.storage
+- ✅ On iOS, no permission is required
 
 
 
 # 🤝 Contributing 
-Contributions are welcome! Please feel free to submit a Pull Request.
+- Contributions are welcome! Please feel free to submit a Pull Request.
 
 
 
 # 📄 License 
-This project is licensed under the MIT License - see the LICENSE file for details.
+- This project is licensed under the MIT License - see the LICENSE file for details.
 
 
 
