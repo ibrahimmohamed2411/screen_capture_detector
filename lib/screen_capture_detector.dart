@@ -8,9 +8,9 @@ import 'dart:developer' as developer;
 class ScreenCaptureDetector {
   static const MethodChannel _channel = MethodChannel('screen_capture_detector');
 
-  final StreamController<String> _screenshotController = StreamController<String>.broadcast();
+  final StreamController<String?> _screenshotController = StreamController<String?>.broadcast();
 
-  Stream<String> get screenshotStream => _screenshotController.stream;
+  Stream<String?> get screenshotStream => _screenshotController.stream;
 
   bool _isListening = false;
 
@@ -18,7 +18,11 @@ class ScreenCaptureDetector {
     _channel.setMethodCallHandler(_handleMethod);
   }
 
-  /// Request necessary permissions
+  /// Requests permissions if needed (Android only).
+  ///
+  /// - On Android 13+ → requests [Permission.photos].
+  /// - On older Android versions → requests [Permission.storage].
+  /// - On iOS → always returns `true` (no permissions required).
   Future<bool> requestPermissions() async {
     if (Platform.isAndroid) {
       PermissionStatus status;
@@ -44,7 +48,10 @@ class ScreenCaptureDetector {
     }
   }
 
-  /// Start listening for screenshots
+  /// Starts listening for screenshots on the current platform.
+  ///
+  /// Returns `true` if detection started successfully.
+
   Future<bool> startListening() async {
     if (_isListening) return true;
 
@@ -64,6 +71,8 @@ class ScreenCaptureDetector {
     }
   }
 
+  /// Stops listening for screenshots.
+
   Future<bool> stopListening() async {
     if (!_isListening) return true;
 
@@ -80,12 +89,12 @@ class ScreenCaptureDetector {
   Future<dynamic> _handleMethod(MethodCall call) async {
     if (call.method == 'onScreenshotTaken') {
       final String? path = call.arguments as String?;
-      if (path != null && path.isNotEmpty) {
-        _screenshotController.add(path);
-        developer.log('Screenshot detected: $path');
-      }
+      _screenshotController.add(path);
+      developer.log('Screenshot detected:${path != null ? ': $path' : ''}');
     }
   }
+
+  /// Disposes the detector and releases resources.
 
   void dispose() {
     stopListening();
