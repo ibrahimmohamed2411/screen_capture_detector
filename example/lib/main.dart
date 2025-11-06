@@ -32,7 +32,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final ScreenCaptureDetector _detector = ScreenCaptureDetector();
-  StreamSubscription<String>? _subscription;
+  StreamSubscription<String?>? _subscription;
   final _screenshots = <String>[];
   bool _isListening = false;
 
@@ -42,26 +42,26 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _startDetection() async {
-    await _detector.startListening();
+    final isScreenshotDetectorStarted = await _detector.startListening();
+    if (isScreenshotDetectorStarted) {
+      _subscription = _detector.screenshotStream.listen((String? path) {
+        setState(() {
+          _screenshots.insert(0, path ?? 'Unknown path');
+          _isListening = true;
+        });
 
-    _subscription = _detector.screenshotStream.listen((String path) {
-      setState(() {
-        _screenshots.insert(0, path);
-        _isListening = true;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Screenshot detected: ${path?.split('/').last}'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
       });
 
-      // Show a snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Screenshot detected: ${path.split('/').last}'),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    });
-
-    setState(() {
-      _isListening = true;
-    });
+      setState(() {
+        _isListening = true;
+      });
+    }
   }
 
   void _stopDetection() {
